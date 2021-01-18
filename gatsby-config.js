@@ -6,7 +6,7 @@ module.exports = {
       summary: `who lives and works in Sydney building useful things.`,
     },
     description: `A starter blog demonstrating what Gatsby can do.`,
-    siteUrl: `https://gatsby-starter-blog-demo.netlify.app/`,
+    siteUrl: `https://peterwooden.com/`,
     social: {
       twitter: `PeterWooden`,
     },
@@ -73,5 +73,19 @@ module.exports = {
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
+    {
+      resolve: `gatsby-plugin-s3`,
+      options: {
+        bucketName: "peterwooden-com",
+        protocol: "https",
+        hostname: "peterwooden.com",
+      },
+    },
+    {
+      resolve: `gatsby-plugin-canonical-urls`,
+      options: {
+        siteUrl: "https://peterwooden.com",
+      }
+    }
   ],
 }
