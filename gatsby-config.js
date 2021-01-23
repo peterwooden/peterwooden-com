@@ -86,6 +86,7 @@ module.exports = {
       options: {
         siteUrl: "https://peterwooden.com",
       }
-    }
+    },
+    'gatsby-plugin-postcss'
   ],
 }
