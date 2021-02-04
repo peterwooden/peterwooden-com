@@ -27,9 +27,9 @@ const Projects = ({
         <a href="https://polymerlaw.com" className="text-blue-600 hover:underline">Link</a>
       </div>
       <div>
-        <p className="text-lg font-bold">Annotate Bounding Boxes (2020)</p>
-        <p>A tool to assist OCR template generation. Drop in an image, and use your cursor to draw boxes around text areas. The corresponding coordinates will be provided.</p>
-        <Link to="/projects/annotate-bounding-boxes" className="text-blue-600 hover:underline">Link</Link>
+        <p className="text-lg font-bold">OCR Template Tool (2020)</p>
+        <p>A tool to assist OCR template generation. Drop in an image, and use your cursor to draw bounding boxes around text areas. The corresponding coordinates will be provided.</p>
+        <Link to="/projects/ocr-template-tool" className="text-blue-600 hover:underline">Link</Link>
       </div>
       <div>
         <p className="text-lg font-bold">Legal advice chatbot (2017)</p>
