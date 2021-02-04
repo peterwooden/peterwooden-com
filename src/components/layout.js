@@ -8,13 +8,13 @@ const Layout = ({ location, title, children }) => {
 
   if (isRootPath) {
     header = (
-      <h1 className="main-heading">
+      <h1 className="text-5xl text-gray-900 font-bold">
         <Link to="/">{title}</Link>
       </h1>
     )
   } else {
     header = (
-      <Link className="header-link-home" to="/">
+      <Link className="font-bold text-gray-600 text-xl" to="/">
         {title}
       </Link>
     )
@@ -22,7 +22,14 @@ const Layout = ({ location, title, children }) => {
 
   return (
     <div className="global-wrapper" data-is-root-path={isRootPath}>
-      <header className="global-header">{header}</header>
+      <nav className="border-b flex justify-between pb-2.5">
+        {[['Blog', '/'], ['Projects', '/projects'], ['About', '/about'], ['Contact', '/contact']].map(([label, href]) => (
+          <Link to={href} className="duration-200 font-medium hover:text-gray-700 transition-colors" key={href}>{label}</Link>
+        ))}
+      </nav>
+      <header className="global-header mt-10">
+        {header}
+      </header>
       <main>{children}</main>
       <footer>
         © {new Date().getFullYear()}, Built with
