@@ -4,14 +4,16 @@ const { createFilePath } = require(`gatsby-source-filesystem`)
 exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions
 
+  /// Blog posts
   // Define a template for blog post
-  const blogPost = path.resolve(`./src/templates/blog-post.js`)
+  const blogPostTemplate = path.resolve(`./src/templates/blog-post.js`)
 
   // Get all markdown blog posts sorted by date
-  const result = await graphql(
+  const blogPostsResult = await graphql(
     `
       {
         allMarkdownRemark(
+          filter: {fileAbsolutePath: {regex: "/content/blog/"  }}
           sort: { fields: [frontmatter___date], order: ASC }
           limit: 1000
         ) {
@@ -26,36 +28,75 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     `
   )
 
-  if (result.errors) {
+  if (blogPostsResult.errors) {
     reporter.panicOnBuild(
       `There was an error loading your blog posts`,
-      result.errors
+      blogPostsResult.errors
     )
     return
   }
 
-  const posts = result.data.allMarkdownRemark.nodes
+  const posts = blogPostsResult.data.allMarkdownRemark.nodes
 
   // Create blog posts pages
-  // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
   // `context` is available in the template as a prop and as a variable in GraphQL
 
-  if (posts.length > 0) {
-    posts.forEach((post, index) => {
-      const previousPostId = index === 0 ? null : posts[index - 1].id
-      const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
+  posts.forEach((post, index) => {
+    const previousPostId = index === 0 ? null : posts[index - 1].id
+    const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
 
-      createPage({
-        path: post.fields.slug,
-        component: blogPost,
-        context: {
-          id: post.id,
-          previousPostId,
-          nextPostId,
-        },
-      })
+    createPage({
+      path: post.fields.slug,
+      component: blogPostTemplate,
+      context: {
+        id: post.id,
+        previousPostId,
+        nextPostId,
+      },
     })
+  })
+
+  /// Other markdown pages
+  // Define a template
+  const mdPostTemplate = path.resolve(`./src/templates/markdown-page.js`)
+
+  // Get all markdown pages
+  const mdPagesResult = await graphql(
+    `
+      {
+        allMarkdownRemark {
+          nodes {
+            id
+            fields {
+              slug
+            }
+          }
+        }
+      }
+    `
+  )
+
+  if (mdPagesResult.errors) {
+    reporter.panicOnBuild(
+      `There was an error loading your markdown pages`,
+      mdPagesResult.errors
+    )
+    return
   }
+
+  const mdPages = mdPagesResult.data.allMarkdownRemark.nodes
+
+  // Create md pages
+  mdPages.forEach((page) => {
+    createPage({
+      path: page.fields.slug,
+      component: mdPostTemplate,
+      context: {
+        id: page.id
+      },
+    })
+  })
+  
 }
 
 exports.onCreateNode = ({ node, actions, getNode }) => {

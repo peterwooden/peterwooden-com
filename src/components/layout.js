@@ -23,7 +23,7 @@ const Layout = ({ location, title, children }) => {
   return (
     <div className="global-wrapper" data-is-root-path={isRootPath}>
       <nav className="border-b flex justify-between pb-2.5">
-        {[['Blog', '/'], ['Projects', '/projects'], ['About', '/about'], ['Contact', '/contact']].map(([label, href]) => (
+        {[['Blog', '/'], ['Projects', '/projects'], ['Reading List', '/reading-list'], ['About', '/about'], ['Contact', '/contact']].map(([label, href]) => (
           <Link to={href} className="duration-200 font-medium hover:text-gray-700 transition-colors" key={href}>{label}</Link>
         ))}
       </nav>
