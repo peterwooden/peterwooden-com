@@ -4,13 +4,13 @@
 
 @layer base {
   h1 {
-    @apply font-bold text-3xl;
+    @apply font-bold text-3xl mt-6;
   }
   h2 {
-    @apply font-bold text-xl;
+    @apply font-bold text-xl mt-6;
   }
   h3 {
-    @apply font-bold text-lg;
+    @apply font-bold text-lg mt-6;
   }
   ol {
     @apply list-decimal list-inside;
