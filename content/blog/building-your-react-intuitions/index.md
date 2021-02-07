@@ -81,7 +81,7 @@ By this step, you'll be able to use React to render any static HTML to the DOM u
 JSX elements are basically syntactic sugar for creating JavaScript objects. The syntax is slightly different from HTML to avoid JavaScript keywords (like `class`, which becomes `className`). To illustrate:
 
 ```jsx
-const element = <h1 className="welcome">Hello world</h1>;
+const element = <h1 className="welcome">Good morning</h1>;
 ```
 
 is almost equivalent to:
@@ -91,7 +91,7 @@ const element = {
   type: 'h1',
   props: {
     className: 'welcome',
-    children: 'Hello world'
+    children: 'Good morning'
   }
 };
 ```
@@ -99,10 +99,13 @@ const element = {
 **This lets you treat HTML as data**, which is very powerful. It lets you do anything with JSX elements that you can with JavaScript values, such as return them from a function, return them from a ternary expression, store them in a variable, map an array of strings to an array of JSX elements, etc. 
 
 ```jsx
+const isAfternoon = true;
 const element = isAfternoon 
     ? <h1 className="welcome">Good afternoon</h1> 
     : <h1 className="welcome">Good morning</h1>;
+```
 
+```jsx
 const days = ['Monday', 'Tuesday', 'Wednesday'];
 const dayElements = days.map(day => <li>{day}</li>)
 ```
@@ -111,13 +114,24 @@ However, **do not** modify a JSX element once you create it, eg:
 
 ```jsx
 // BAD
+const isAfternoon = true;
 const element = <h1 className="welcome">Good morning</h1>;
 if (isAfternoon) {
     element.props.children = 'Good afternoon';
 }
 ```
 
-At the end of this step, you should realise that you can tell React what to render by giving it different values depending on your logic, using plain JavaScript.
+At the end of this step, you should realise that you can tell React what to render by giving it different values depending on your logic, using plain JavaScript. For example:
+
+```jsx
+const isAfternoon = true;
+ReactDOM.render(
+    isAfternoon 
+        ? <h1 className="welcome">Good afternoon</h1> 
+        : <h1 className="welcome">Good morning</h1>,
+    document.getElementById('root') // Refers to our outer container
+);
+```
 
 ## 3. React as a Template Engine
 
@@ -143,7 +157,7 @@ ReactDOM.render(
 );
 ```
 
-Note that using `tasks.map(...)` is much neater than an imperative way of creating the task list:
+Note that using `tasks.map(...)` to create the array of elements is much neater (and the best practice) compared to an imperative way of creating the task list:
 
 ```jsx{4-7,12}
 // BAD
@@ -164,7 +178,7 @@ ReactDOM.render(
 );
 ```
 
-By the end of this step, you should realise that React is able to do anything that template engines can do, using plain JavaScript and curly braces.
+By the end of this step, you should realise that React is able to do anything that template engines can do, using JSX and plain JavaScript within curly braces.
 
 ## 4. Compose UI with Function Components
 
@@ -195,7 +209,54 @@ We create a function which returns the element rather than just a variable holdi
 - A new JSX element is created every time the component is used
 - We can treat the function as a JSX element, and pass data to it through attributes
 
-Note that custom components must start with a capital letter so the JSX compiler can distinguish between HTML elements and custom elements.
+*The anatomy of a React function component*
+
+- Its name must start with a capital letter so the JSX compiler can distinguish between HTML elements and custom elements
+- It must return a JSX element tree, null/false/undefined, or a string
+- When a component is referenced in JSX (`<MyComponent .../>`), the attributes are turned into key-value pairs in a single object which is the first parameter of the function. Any JavaScript expression can be used as an attribute value.
+
+```jsx
+<MyComponent 
+    string="abc" 
+    number={123} 
+    object={{key: 'value'}}
+    array={[1, 2, 3]}
+    function={() => console.log('hi')}
+/>
+// The above attributes will be passed like this: 
+MyComponent({
+    string: 'abc', 
+    number: 123, 
+    object: {key: 'value'}, 
+    array: [1, 2, 3],
+    function: () => console.log('hi')
+})
+// However, React does some things in between - this is just to build your intuition about props
+```
+
+The attributes can be accessed like this, for example:
+
+```jsx
+function MyComponent(props) {
+    // Logic here
+    // ...
+    return (
+        <div>
+            String: {props.string}
+            Number: {props.number}
+            Object value: {props.object.key}
+            Button with callback:
+                <button onClick={props.function}>
+                    Click me
+                </button>
+        </div>
+    );
+}
+```
+
+The `unidirectional data flow` concept should be clear by now. Data, whether in the form of string/objects/arrays, or in the form of callbacks, gets passed from parent elements to child elements through attributes.
+
+By now, you should be able to break up a big JSX element tree into reusable components, and pass data down the tree through props (attributes).
 
 ## 5. Interaction - Manage state and side effects declaratively, not imperatively
 
@@ -211,7 +272,7 @@ First, lets be clear about these concepts with some examples:
 
 You might normally manage state by declaring a variable or class member, and updating it directly:
 
-```jsx
+```jsx{2, 5}
 // WRONG approach
 let state = ['Red'];
 function Component(){
@@ -225,7 +286,7 @@ function Component(){
 
 Instead, you use a 'hook' called `useState` to provide the current state and a setter function.
 
-```jsx
+```jsx{3, 7}
 // Correct approach
 function Component(){
     const [state, setState] = useState(['Red']);
@@ -239,17 +300,15 @@ function Component(){
 }
 ```
 
-Generally,
+Generally `useState` works as follows, and you can use it as many times as needed in a component:
 
 ```js
 const [currentState, setState] = useState(initialState);
 ```
 
-You can use as many state hooks in a function as you need.
-
 When the state changes, React schedules a rerender, and the component function and its children are called again, but the `state` variables will reflect the updated values.
 
-Hooks like useState might have the appearance of magic, and you might wonder if they are just some dodgy ad-hoc trick. But they actually have a firm foundation in principle. In the functional programming world, they are called 'algebraic effects'. They are well understood and you can do some really cool and useful things with them, but that is getting beyond the scope of this post. Lets return to our code.
+Hooks like useState might have the appearance of magic, and you might wonder if they are just some dodgy ad-hoc trick. But they actually have a firm foundation in principle. In the functional programming world, they are called 'algebraic effects'. They are well understood, predictable, and you can do some really cool and useful things with them, but that is getting beyond the scope of this post. Lets return to our code.
 
 First, set up a couple of elements to allow the user to add to the list:
 
@@ -310,6 +369,8 @@ ReactDOM.render(
 
 And there you go, you now have a React todo app.
 
+Combining steps 4 and 5, you might figure out how to change the state of parent elements (hint: manage the state in the parent element, and pass callbacks to the children which call the setState function in the parent component). 
+
 *Side effects*
 
 How can you do things like do an API call? Lets say that we need to do one to get the user's name. If we wrote the fetch code within the component function, it will be called every time the component is rendered, but we only want it to be called once. We can use a hook called `useEffect` - pass it a function, and it will call it only on the first render.
@@ -354,6 +415,10 @@ You can also use `useEffect` to perform a task when a component is being removed
 
 ## Summary
 
-React lets you template HTML and infuse it with interactivity. If you come from the OOP world, you need to avoid thinking in terms of changing state directly, and instead think in terms of declaring data and functions. The features of React lead to very simple and maintainable code, and learning the right approaches pays big dividends.
+React lets you template HTML and infuse it with as little or as much interactivity as you want. By now you should have some intuitions about how to think about building UI with React. If you come from the OOP or imperative world, you need to avoid thinking in terms of changing state and the DOM imperatively, and instead think in terms of declaring data and functions, and let React render the result of it to the DOM. The features of React lead to very simple, performant and maintainable code, and learning the right approaches pays big dividends.
 
-The next thing to do after reading this article is to learn how to properly [create a React app](https://reactjs.org/docs/create-a-new-react-app.html).
+
+## Next steps
+
+- Learn how to properly [create a React app](https://reactjs.org/docs/create-a-new-react-app.html).
+- Learn about how React updates the DOM for you - the [Virtual DOM](https://reactjs.org/docs/faq-internals.html).
