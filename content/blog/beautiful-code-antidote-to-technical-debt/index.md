@@ -1,9 +1,9 @@
 ---
 title: Beautiful Code is the Antidote for Technical Debt
-date: "2021-02-10T09:48:00Z"
+date: "2021-03-23T09:48:00Z"
 ---
 
-Tech companies don't just build once-off products for customers. It's a cycle of constant iteration. Software engineers don't just write code to solve a customer's present problem, some of their code will be used to solve future problems. How software engineers write their code directly determines the balance between the cost of creating present value for customers, and the cost of creating future value for customers. This is a question of strategy. See the following payoff charts for each strategy, which shows how rushing is counter-productive and accumulates technical debt, which crushes future productivity:
+Tech companies don't just build once-off products for customers. It's a cycle of constant iteration. Software engineers write code to solve a customer's present problem, but some of their code will need to be used to solve future problems. How software engineers write their code directly determines the balance between the speed of creating present value for customers, and the speed of creating future value for customers. This is a question of strategy. See the following payoff charts for each strategy, which shows how rushing is counter-productive and accumulates technical debt, which crushes future productivity:
 
 ![Cost to Value Charts](./cost-value-charts.svg)
 
@@ -13,7 +13,7 @@ This article advocates for the third strategy, and argues that beautiful code is
 
 ## What is technical debt and technical capital?
 
-Much has been written about technical debt ([example](https://martinfowler.com/bliki/TechnicalDebt.html)), and is essentially a bargain to ship something faster now in exchange for shipping things slower in the future by making it require more work. Technical debt is a term invented for managers to understand why a new feature is taking so long, and convince them that it makes financial sense to invest time in clearing up spaghetti code. Refactoring is [generally accepted](https://medium.com/tag-bio/refactoring-is-the-cure-for-technical-debt-but-only-if-you-take-it-9fd8cc42dd93) as the cure for technical debt once it exists. 
+Much has been written about technical debt ([example](https://martinfowler.com/bliki/TechnicalDebt.html)), and it is essentially a bargain to ship something faster now in exchange for shipping things slower in the future by defferring work. Technical debt is a term invented for managers to understand why a new feature is taking so long, and convince them that it makes financial sense to invest time in clearing up spaghetti code. Refactoring is [generally accepted](https://medium.com/tag-bio/refactoring-is-the-cure-for-technical-debt-but-only-if-you-take-it-9fd8cc42dd93) as the cure for technical debt once it already exists. 
 
 Management needs to strike a careful and deliberate balance between shipping fast now, and shipping fast in the future. Sometimes, it makes sense to take on some technical debt. For example, you might need to ship fast now to land a big customer. But shipping fast all the time is an unsustainable and counter-productive strategy.
 
@@ -40,51 +40,53 @@ The opposite of technical debt is where adding new features is made _easier_, no
 Here are some symptoms:
 
 - Slow and difficult maintainance
-- Sales is breaking their promises
-- Low developer morale - a feeling of dread when thinking about a codebase
+- Sales are breaking their promises
 - More time is spent fixing issues rather than shipping new features ([source](https://thevaluable.dev/fighting-software-entropy/))
+- Low developer morale - a feeling of dread when thinking about a codebase, low motivation to fix anything, and lack of inspiration
 - Similar problems are solved without reusing existing work
 - The code is littered with linter warnings and code smells ([source](https://www.castsoftware.com/blog/the-symptoms-and-causes-of-technical-debt))
 
 ## Beautiful code as a proxy for technical capital
 
-In the trenches of day to day software development, engineers don't have antennae for such an abstract thing as technical debt and capital before their symptoms arise. How can I know that this code I'm writing is going to cause the above problems? At the same time, how do I not go overboard and waste time trying to make it more perfect than it needs to be?
+In the trenches of day to day software development, engineers don't have antennae for such an abstract thing as technical debt or capital before their symptoms arise. How can I know that this code I'm writing is going to cause the above problems? At the same time, how do I not go overboard and waste time trying to make it more perfect than it needs to be?
 
 When dealing with complex decisions, heuristics are best. It's even easier when we have an instinctive reaction to guide us. Fortunately, 84% of novices, and 100% of experts, have aesthetic reactions to code ([study](https://www.researchgate.net/publication/232443360_The_Aesthetics_of_Software_Code_A_Quantitative_Exploration)) - some more than others. Some people feel joy at beautiful code, and disgust or dread at ugly code. Others are more indifferent.
 
 Below are some principles for beautiful code which are worded with aesthetic connotations for that reason:
 
-### [Clarity](https://softwareengineering.stackexchange.com/a/207932), rather than Confusion
+### 1. [Clarity](https://softwareengineering.stackexchange.com/a/207932), rather than Confusion
 
 To someone reading the code, it must be easy to understand what it does.
 
 Here are some objective guidelines:
 
-_Optimise for readability rather than minimum lines of code_
+**1.1** _Optimise for readability rather than minimum lines of code_
 
 Beautiful code does not try to solve a problem with the least amount of keystrokes and sneaky language tricks that make the author look smart. There is no reason to optimise for fewest lines of code itself - that should only be a consequence rather than a primary goal. You can still use cool functional programming techniques, but rather than nesting 
 
-_Use immutable data_
+**1.2** _Use immutable data_
 
-Immutable data cannot be changed once it is created. Treating data immutably greatly reduces the possible logic paths that a reader needs to understand. 
+Immutable data cannot be changed once it is initialised. Treating data immutably greatly reduces the possible logic paths that a reader needs to understand. To understand what a line does, you only need to read the lines before it and trace the program backwards.
 
-On the other end of the spectrum to immutable data is mutability hell, where data is initialised, then conditionally changed, iterated over, changed by code in other methods or files, and the poor reader is lost in an overwhelmingly tangled web of logic. To make a change is a nightmare - the first problem is understanding what to change, the next is to make sure that it doesn't break anything else. In these sorts of scenarios, its tempting to skip the most important step of figuring out what the hell it actually does. Back when computer programs had to fit everything in 4kb of RAM, we could only change or _mutate_ existing values in memory. Except for ultra-performant systems, there is almost no need to use mutable data these days.
+On the other end of the spectrum to immutable data is mutability hell, where data is initialised, then conditionally changed, iterated over, changed by code in other methods or files, and the poor reader is lost in an overwhelmingly tangled web of logic. To make a change is a nightmare - the first problem is understanding what to change, the next is to make sure that it doesn't break anything else. In these sorts of scenarios, its tempting to skip the most important step of figuring out what the hell it actually does. 
+
+Back when computer programs had to fit everything in 4kb of RAM, we could only change or _mutate_ existing values in memory. Except for ultra-performant systems, there is almost no need to use mutable data these days.
 
 The cognitive complexity of understanding mutable-style code scales ~~exponentially~~ factorially at worst, since any mutation can react to previous mutations, resulting in a giant tree of possible values. This tree of possibilities is sometimes impossible to understand. On the other hand, writing code with immutable data is much simpler since the logic complexity scales linearly to the number of operations.
 
-_Composition and [orthoganality](https://en.wikipedia.org/wiki/Orthogonality%5F%28programming%29), rather than [coupling](https://en.wikipedia.org/wiki/Coupling%5F%28computer%5Fprogramming%29)_
+**1.3** _Composition and [orthoganality](https://en.wikipedia.org/wiki/Orthogonality%5F%28programming%29), rather than [coupling](https://en.wikipedia.org/wiki/Coupling%5F%28computer%5Fprogramming%29)_
 
 Problems should be untangled to identify all the subproblems that can be solved independently, and then the code should be composed of separate solutions to each of these subproblems. When solutions are coupled, a change in one place forces a ripple effect of changes elsewhere, they are harder to understand, and it is less easily reused and tested. Other than untangling specific problems, a general thing to do is to untangle hardcoded data from logic. The 'single responsibility principle' is related, but not the same thing.
 
-_Co-location of logic_
+**1.4** _Co-location of logic_
 
-Related logic should be co-located or easily findable. This is one big benefit of OOP - methods which affect a data structure are grouped within the same file.
+Related logic should be co-located or easily findable. This is one big benefit of OOP, which otherwise fails on the above two points - methods which affect a data structure are grouped within the same file.
 
-### [Elegance](https://softwareengineering.stackexchange.com/a/207932), rather than Complication
+### 2. [Elegance](https://softwareengineering.stackexchange.com/a/207932), rather than Complication
 
 Beautiful code is not wasteful or repetitive. The underlying algorithm is expressed naturally and not overcomplicated with unnecessary idioms. Like the composition point above, the whole solution is composed of reusable, smaller solutions.
 
-### Stylistic
+### 3. Stylistic, rather than Unfamiliar
 
 Code should consistently follow standard style conventions for that language. This includes code layout, spacing, commenting. This makes it more familiar and reduces the cognitive load to a reader.
 
