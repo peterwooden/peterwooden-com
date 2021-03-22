@@ -155,6 +155,7 @@ h5 > a,
 h6 > a {
   text-decoration: none;
   color: inherit;
+  font-weight: bolder;
 }
 
 /* Prose */

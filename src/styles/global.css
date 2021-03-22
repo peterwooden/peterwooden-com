@@ -19,7 +19,7 @@
     @apply m-0;
   }
   ul {
-    @apply list-disc list-inside;
+    @apply list-disc list-inside mt-4;
   }
   ul li {
     @apply m-0;

@@ -29,6 +29,9 @@ const Projects = ({
       <div>
         <h3>OCR Template Tool (2020)</h3>
         <p>A tool to assist OCR template generation. Drop in an image, and use your cursor to draw bounding boxes around text areas. The corresponding coordinates will be provided.</p>
+        <ul>
+          <li>React/useReducer</li>
+        </ul>
         <Link to="/projects/ocr-template-tool">Link</Link>
       </div>
       <div>
